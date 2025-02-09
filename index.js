@@ -3,7 +3,8 @@ import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import busRoutes from "./routes/busRoutes.js";
-import pool from "./db.js";
+import pool from "./config/db.js";
+
 
 // Load environment variables
 dotenv.config();
