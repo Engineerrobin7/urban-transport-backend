@@ -1,0 +1,6 @@
+[build]
+builder = "nodejs"
+buildCommand = "npm install"
+
+[start]
+command = "node index.js"
