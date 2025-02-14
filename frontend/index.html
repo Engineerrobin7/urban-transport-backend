@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SmartRide</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <div class="login-container">
+        <h2>Welcome to SmartBus India</h2><hr>
+        <h3>Login</h3>
+
+        <div id="role-buttons">
+            <button onclick="showForm('passenger')">Passenger</button>
+            <button onclick="showForm('driver')">Bus Driver</button>
+        </div>
+
+        <!-- Passenger login -->
+        <form id="passenger-form" class="login-form hidden">
+            <h4>Passenger Login</h4>
+            <input type="text" id="passenger-username" placeholder="Username" required>   
+
+            <div class="password-container">
+                <input type="password" id="passenger-password" placeholder="Password" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility('passenger-password')">
+                    <i class="fa-solid fa-eye"></i>
+                </span>
+            </div>
+
+            <button type="submit">Login</button>
+            <p class="toggle-link" onclick="toggleAuthForm()">Don't have an account? <span>Sign Up</span></p>
+        </form>
+
+        <!-- Passenger sign up form -->
+        <form id="passenger-signup-form" class="login-form hidden">
+            <h4>Passenger Sign Up</h4>
+            <input type="text" id="passenger-signup-fullname" placeholder="Full Name" required> 
+            <input type="text" id="passenger-signup-username" placeholder="Username" required>   
+            <input type="email" id="passenger-signup-email" placeholder="Email" required>
+            <input type="text" id="passenger-signup-phone" placeholder="Phone Number" required>
+
+            <div class="password-container">
+                <input type="password" id="passenger-new-password" placeholder="Password" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility('passenger-new-password')">
+                    <i class="fa-solid fa-eye"></i>
+                </span>
+            </div>
+
+            <button type="submit">Sign Up</button>
+            <p class="toggle-link" onclick="toggleAuthForm()">Already have an account? <span>Login</span></p>
+        </form>
+
+        <!-- Driver login -->
+        <form id="driver-form" class="login-form hidden">
+            <h4>Driver Login</h4>
+            <input type="text" id="driver-id" placeholder="Driver ID (Provided by Admin)" required> 
+            <input type="text" id="driver-username" placeholder="Username" required>   
+
+            <div class="password-container">
+                <input type="password" id="driver-password" placeholder="Password" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility('driver-password')">
+                    <i class="fa-solid fa-eye"></i>
+                </span>
+            </div>
+            <button type="submit">Login</button>
+            <p class="toggle-link" onclick="toggleAuthForm()">Don't have an account? <span>Sign Up</span></p>
+        </form>
+
+        <!-- Driver sign up form -->
+        <form id="driver-signup-form" class="login-form hidden">
+            <h4>Bus Driver Sign Up</h4>
+            <input type="text" id="driver-signup-fullname" placeholder="Full Name" required> 
+            <input type="text" id="driver-signup-username" placeholder="Username" required>   
+            <input type="email" id="driver-signup-email" placeholder="Email" required>
+            <input type="text" id="driver-signup-phone" placeholder="Phone Number" required>
+            <input type="text" id="driver-signup-busNumber" placeholder="Bus Number" required>
+         
+            <div class="password-container">
+                <input type="password" id="driver-new-password" placeholder="Password" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility('driver-new-password')">
+                    <i class="fa-solid fa-eye"></i>
+                </span>
+            </div>
+
+            <button type="submit">Sign Up</button>
+            <p class="toggle-link" onclick="toggleAuthForm()">Already have an account? <span>Login</span></p>
+        </form>
+    </div>
+
+    <script defer src="script.js"></script>
+</body>
+</html>

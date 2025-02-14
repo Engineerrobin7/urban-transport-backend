@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRide</title>
+    <link rel="stylesheet" href="dash.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!--sidebar-->
+        <nav class="sidebar">
+            <h3>Dashboard</h3>
+            <ul>
+                <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="tracking.html">Live Tracking</a></li>
+                <li><a href="alert.html">Alert & Notification</a></li>
+                <li><a href="ticketing.html">Smart Ticketing</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="#" id="stopCheckIn" style="display: none;">Stop Check-In</a></li>
+            </ul>
+        </nav>
+
+        <main class="content">
+            <h1>Welcome To Our Website</h1>
+            <p>Click "Mark Presence" to notify the driver that you are waiting at a stop.</p>
+            <div class="form-box">
+                <h3>Enter Your Route</h3>
+                <input type="text" id="fromLocation" placeholder="From" required>
+                <input type="text" id="toLocation" placeholder="To" required>
+                <button id="submitRoute">Search</button>
+            </div>
+
+            <div class="bus-list">
+                <p>See available buses & their routes below.</p>
+                <h3>Available Buses</h3>
+                <ul id="availableBuses"></ul>
+            </div>
+
+            <div class="check-in-box">
+                <h3>Check-In Status</h3>
+            <button id="stopCheckIn">Mark Presence</button>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>  <!-- Make sure this loads first -->
+    <script src="passenger.js"></script>
+
+</body>
+</html>

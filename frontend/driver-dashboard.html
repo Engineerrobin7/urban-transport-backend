@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRide</title>
+    <link rel="stylesheet" href="dash.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!--sidebar-->
+        <nav class="sidebar">
+            <h3>Dashboard</h3>
+            <ul>
+                <li><a href="driver-dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="tracking.html">Live Tracking</a></li>
+                <li><a href="alert.html">Alert & Notification</a></li>
+                <li><a href="ticketing.html">Smart Ticketing</a></li>
+                <li><a href="profile.html">Profile</a></li>
+            </ul>
+        </nav>
+
+        <main class="content">
+            <h1>Welcome To Our Website</h1>
+            <p>Enter your route before going on duty. </p>
+            <div class="form-box">
+                <h3>Enter Your Route</h3>
+                <input type="text" id="fromLocation" placeholder="From" required>
+                <input type="text" id="toLocation" placeholder="To" required>
+                <button id="submitRoute">Save Route</button>
+            </div>
+            
+            <p>Manage your duty status and see passenger check-ins.</p>
+            <button id="toggleDuty">Go On Duty</button>
+            <p id="dutyStatus">Status: Off Duty</p>
+
+            <h2>Passenger Check-Ins</h2>
+            <ul id="passengerList"></ul>
+        </main>
+    </div>
+    <script src="driver.js"></script>
+</body>
+</html>

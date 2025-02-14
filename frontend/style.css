@@ -1,0 +1,118 @@
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #0073e6, #00c6ff);
+  height: 100vh;
+  display : flex;
+  justify-content: center;
+  align-items: center;
+  background-image:url(bus.jpeg) ;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover ;
+}
+
+.login-container{
+  background: beige;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  width: 300px;
+  text-align: center;
+}
+
+.login-form{
+  margin-top: 20px;
+}
+
+/*login form*/
+.login-form input{
+  width: 90%;
+  padding:7px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+/*role button*/
+#role-buttons{
+  margin-bottom: 15px;
+}
+
+#role-buttons button{
+  background: #0073e6;
+  color: beige;
+  border: none;
+  padding: 10px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#role-buttons button:hover{
+  background: #005bb5;
+}
+
+
+/*Password Container*/
+.password-container {
+  position: relative;
+  width: 92%;
+  margin: auto;
+}
+
+.password-container input{
+  width: 100%;
+  padding-right:40px;
+  padding: 7px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+
+}
+
+.toggle-password i{
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #777;
+}
+
+.toggle-password i:hover{
+  color: #333;
+}
+
+.hidden{
+  display: none !important;
+}
+
+.toggle-link{
+  text-decoration: none;
+  color: #0073e6;
+  font-size: 14px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.toggle-link span{
+  color: #333;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Login Button*/
+.login-form button{
+  background: #00c6ff;
+  color: beige;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.login-form button:hover{
+  background: #009ddf;
+}
