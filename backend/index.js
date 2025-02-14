@@ -2,8 +2,7 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
-import busRoutes from "./routes/busRoutes.js";
-import pool from "./config/db.js";
+import pool from "./config/db.js"; // PostgreSQL database connection
 
 // Load environment variables
 dotenv.config();
@@ -17,30 +16,28 @@ app.use(cors());
 app.use(morgan("dev")); // Logs API requests
 app.use(express.json()); // Parse JSON request body
 
-// API Routes
-app.use("/api/buses", busRoutes);
-
+// API Route to fetch buses based on user input
 app.get("/api/buses", async (req, res) => {
     const { from, to } = req.query;
-    let query = "SELECT * FROM buses";
-    const values = [];
 
-    if (from && to) {
-        query += " WHERE from_location = $1 AND to_location = $2";
-        values.push(from, to);
-    } else if (from) {
-        query += " WHERE from_location = $1";
-        values.push(from);
-    } else if (to) {
-        query += " WHERE to_location = $1";
-        values.push(to);
+    // Check if "from" and "to" are provided
+    if (!from || !to) {
+        return res.status(400).json({ error: "Both 'from' and 'to' parameters are required." });
     }
+
+    let query = "SELECT * FROM buses WHERE from_location ILIKE $1 AND to_location ILIKE $2";
+    const values = [from, to];
 
     try {
         const result = await pool.query(query, values);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "No buses available for this route." });
+        }
+
         res.json(result.rows);
     } catch (err) {
-        console.error(err);
+        console.error("Database error:", err);
         res.status(500).json({ error: "Failed to retrieve buses" });
     }
 });

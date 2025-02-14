@@ -1,12 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Passenger.js loaded!");
+    console.log("🚀 Passenger.js loaded!");
 
     // Selecting elements
     const stopCheckInBtn = document.getElementById("stopCheckIn");
     const availableBusesList = document.getElementById("availableBuses");
     const submitRouteBtn = document.getElementById("submitRoute");
 
-    // 🚀 Function to fetch and display buses based on user input
+    // 🚍 Function to fetch and display buses based on user input
     async function fetchBuses(fromLocation, toLocation) {
         try {
             if (!fromLocation || !toLocation) {
@@ -19,26 +19,37 @@ document.addEventListener("DOMContentLoaded", function () {
             let response = await fetch(url);
             let data = await response.json();
 
-            console.log("Bus Data:", data); // Debugging: Check if data is received
+            console.log("📌 Bus Data:", data); // Debugging: Check if data is received
 
             availableBusesList.innerHTML = ""; // Clear old data
 
-            if (data && data.length > 0) {
+            if (data.error) {
+                availableBusesList.innerHTML = `<li style="color: red;">⚠️ ${data.error}</li>`;
+                return;
+            }
+
+            if (data.length > 0) {
                 data.forEach(bus => {
                     let li = document.createElement("li");
-                    li.textContent = `🚌 Bus from ${bus.from_location} to ${bus.to_location} via ${bus.via} at ${bus.departure_time}`;
+                    li.innerHTML = `
+                        🚌 <b>Bus:</b> ${bus.bus_name || "Unknown"} <br>
+                        📍 <b>From:</b> ${bus.from_location} <br>
+                        🎯 <b>To:</b> ${bus.to_location} <br>
+                        ⏳ <b>Via:</b> ${bus.via || "Direct"} <br>
+                        🕒 <b>Departure:</b> ${bus.departure_time || "Not Available"}
+                    `;
                     availableBusesList.appendChild(li);
                 });
             } else {
-                availableBusesList.innerHTML = "<li>No buses available for this route.</li>";
+                availableBusesList.innerHTML = "<li>🚫 No buses available for this route.</li>";
             }
         } catch (error) {
-            console.error("Error fetching buses:", error);
-            availableBusesList.innerHTML = "<li>Error fetching buses. Please try again.</li>";
+            console.error("❌ Error fetching buses:", error);
+            availableBusesList.innerHTML = "<li style='color: red;'>❌ Error fetching buses. Please try again.</li>";
         }
     }
 
-    // 🏷️ Event listener for fetching buses on button click
+    // 🎟️ Event listener for fetching buses on button click
     if (submitRouteBtn) {
         submitRouteBtn.addEventListener("click", function () {
             const fromLocation = document.getElementById("fromLocation")?.value.trim();
