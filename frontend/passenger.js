@@ -1,91 +1,72 @@
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("🚀 Passenger.js loaded!");
+    console.log("Passenger.js loaded!");
 
-    // Selecting elements
     const stopCheckInBtn = document.getElementById("stopCheckIn");
     const availableBusesList = document.getElementById("availableBuses");
     const submitRouteBtn = document.getElementById("submitRoute");
 
-    // 🚍 Function to fetch and display buses based on user input
     async function fetchBuses(fromLocation, toLocation) {
+        if (!availableBusesList) {
+            console.error("🚨 Error: Element 'availableBuses' not found in DOM.");
+            return;
+        }
+
+        // Ensure at least one input is provided
+        if (!fromLocation && !toLocation) {
+            alert("⚠️ Please enter at least one location.");
+            return;
+        }
+
+        let url = `http://localhost:5000/api/buses`;
+        let params = [];
+
+        if (fromLocation) params.push(`from=${encodeURIComponent(fromLocation)}`);
+        if (toLocation) params.push(`to=${encodeURIComponent(toLocation)}`);
+
+        if (params.length > 0) {
+            url += "?" + params.join("&");
+        }
+
         try {
-            if (!fromLocation || !toLocation) {
-                alert("⚠️ Please enter both 'From' and 'To' locations.");
-                return;
-            }
-
-            let url = `http://localhost:5000/api/buses?from=${encodeURIComponent(fromLocation)}&to=${encodeURIComponent(toLocation)}`;
-
             let response = await fetch(url);
-            let data = await response.json();
 
-            console.log("📌 Bus Data:", data); // Debugging: Check if data is received
-
-            availableBusesList.innerHTML = ""; // Clear old data
-
-            if (data.error) {
-                availableBusesList.innerHTML = `<li style="color: red;">⚠️ ${data.error}</li>`;
-                return;
+            if (!response.ok) {
+                throw new Error(`API responded with ${response.status}`);
             }
+
+            let data = await response.json();
+            console.log("Bus Data:", data); 
+
+            availableBusesList.innerHTML = ""; 
 
             if (data.length > 0) {
                 data.forEach(bus => {
                     let li = document.createElement("li");
-                    li.innerHTML = `
-                        🚌 <b>Bus:</b> ${bus.bus_name || "Unknown"} <br>
-                        📍 <b>From:</b> ${bus.from_location} <br>
-                        🎯 <b>To:</b> ${bus.to_location} <br>
-                        ⏳ <b>Via:</b> ${bus.via || "Direct"} <br>
-                        🕒 <b>Departure:</b> ${bus.departure_time || "Not Available"}
-                    `;
+                    li.textContent = `🚌 Bus from ${bus.from_location} to ${bus.to_location} at ${bus.departure_time}`;
                     availableBusesList.appendChild(li);
                 });
             } else {
-                availableBusesList.innerHTML = "<li>🚫 No buses available for this route.</li>";
+                availableBusesList.innerHTML = "<li>No buses available for this route.</li>";
             }
         } catch (error) {
-            console.error("❌ Error fetching buses:", error);
-            availableBusesList.innerHTML = "<li style='color: red;'>❌ Error fetching buses. Please try again.</li>";
+            console.error("Error fetching buses:", error);
+            availableBusesList.innerHTML = "<li>Error fetching buses. Please try again.</li>";
         }
     }
 
-    // 🎟️ Event listener for fetching buses on button click
     if (submitRouteBtn) {
         submitRouteBtn.addEventListener("click", function () {
             const fromLocation = document.getElementById("fromLocation")?.value.trim();
             const toLocation = document.getElementById("toLocation")?.value.trim();
+            
+            if (!fromLocation && !toLocation) {
+                alert("⚠️ Please enter at least one location.");
+                return;
+            }
 
             fetchBuses(fromLocation, toLocation);
         });
     } else {
         console.warn("🚨 Warning: submitRoute button not found!");
-    }
-
-    // 📍 Passenger Check-In (Geolocation)
-    if (stopCheckInBtn) {
-        stopCheckInBtn.addEventListener("click", function () {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function (position) {
-                        let lat = position.coords.latitude;
-                        let lng = position.coords.longitude;
-                        let timestamp = new Date().toLocaleTimeString();
-                        let checkIns = JSON.parse(localStorage.getItem("passengerCheckIns")) || [];
-                        checkIns.push({ lat, lng, timestamp });
-
-                        localStorage.setItem("passengerCheckIns", JSON.stringify(checkIns));
-
-                        alert("✅ Check-In successful! The driver will see your location.");
-                    },
-                    function (error) {
-                        alert("❌ Error getting location: " + error.message);
-                    }
-                );
-            } else {
-                alert("⚠️ Geolocation is not supported by this browser.");
-            }
-        });
-    } else {
-        console.warn("🚨 Warning: stopCheckIn button not found!");
     }
 });
