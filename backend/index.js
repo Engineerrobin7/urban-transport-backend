@@ -2,48 +2,28 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import busRoutes from "./routes/busRoutes.js";
 import pool from "./config/db.js";
 
+// Load environment variables
 dotenv.config();
 
+// Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
-app.use(morgan("dev"));
-app.use(express.json());
+app.use(morgan("dev")); // Logs API requests
+app.use(express.json()); // Parse JSON request body
 
-// 🔥 API Route for fetching buses
-app.get("/api/buses", async (req, res) => {
-    const { from, to } = req.query;
-
-    // Check if at least one parameter is provided
-    if (!from && !to) {
-        return res.status(400).json({ error: "At least one parameter ('from' or 'to') is required." });
-    }
-
-    let query = "SELECT * FROM buses WHERE 1=1"; // Base query
-    let values = [];
-
-    if (from) {
-        query += " AND LOWER(from_location) = LOWER($1)";
-        values.push(from);
-    }
-
-    if (to) {
-        query += " AND LOWER(to_location) = LOWER($" + (values.length + 1) + ")";
-        values.push(to);
-    }
-
-    try {
-        const result = await pool.query(query, values);
-        return res.json(result.rows);
-    } catch (err) {
-        console.error("Database error:", err);
-        return res.status(500).json({ error: "Failed to retrieve buses" });
-    }
+// ✅ Root API Route
+app.get("/api", (req, res) => {
+    res.json({ message: "🚀 API is running! Use /api/buses to fetch buses." });
 });
+
+// ✅ Bus API Routes
+app.use("/api/buses", busRoutes);
 
 // Root Route
 app.get("/", (req, res) => {
@@ -52,5 +32,5 @@ app.get("/", (req, res) => {
 
 // Start Server
 app.listen(PORT, () => {
-    console.log(`✅ Server running on http://localhost:${PORT}`);
+    console.log(`✅ Server running on port ${PORT}`);
 });

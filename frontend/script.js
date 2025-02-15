@@ -1,213 +1,169 @@
-// Global variable to track the selected role
-let selectedRole = "";
-
-// Function to show the appropriate form based on the selected role
-function showForm(role) {
-    selectedRole = role;
-    document.getElementById("role-buttons").style.display = "none";
-    hideAllForms();
-
-    let formToShow = document.getElementById(`${role}-form`);
-    if (formToShow) {
-        formToShow.classList.remove("hidden");
-    } else {
-        console.error(`Error: Form not found for role ${role}-form`);
-    }
-}
-
-// Function to hide all forms
-function hideAllForms() {
-    let formIds = ["passenger-form", "passenger-signup-form", "driver-form", "driver-signup-form"];
-    formIds.forEach(id => {
-        let element = document.getElementById(id);
-        if (element) {
-            element.classList.add("hidden");
-        }
-    });
-}
-
-// Function to toggle between login and signup forms
-function toggleAuthForm() {
-    if (!selectedRole) {
-        alert("Please select Passenger or Driver first!");
-        return;
-    }
-
-    let loginForm = document.getElementById(`${selectedRole}-form`);
-    let signupForm = document.getElementById(`${selectedRole}-signup-form`);
-
-    if (loginForm && signupForm) {
-        if (!loginForm.classList.contains("hidden")) {
-            loginForm.classList.add("hidden");
-            signupForm.classList.remove("hidden");
-        } else {
-            loginForm.classList.remove("hidden");
-            signupForm.classList.add("hidden");
-        }
-    } else {
-        console.error(`Error: Form not found for role ${selectedRole}-form`);
-    }
-}
-
-// Function to toggle password visibility
-function togglePasswordVisibility(inputId) {
-    const passwordInput = document.getElementById(inputId);
-    if (passwordInput) {
-        passwordInput.type = passwordInput.type === "password" ? "text" : "password";
-    }
-}
-
-// Function to validate email format
-function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+$/.test(email);
-}
-
-// Function to validate phone number (10 digits)
-function isValidPhone(phone) {
-    return /^[0-9]{10}$/.test(phone);
-}
-
-// Function to validate password (at least 6 characters)
-function isValidPassword(password) {
-    return password.length >= 6;
-}
-
-// Function to handle signup for both passenger and driver (API CALL)
-async function handleSignup(event, role) {
-    event.preventDefault();
-
-    let fullname = document.getElementById(`${role}-signup-fullname`).value.trim();
-    let username = document.getElementById(`${role}-signup-username`).value.trim();
-    let email = document.getElementById(`${role}-signup-email`).value.trim();
-    let phone = document.getElementById(`${role}-signup-phone`).value.trim();
-    let password = document.getElementById(`${role}-new-password`).value.trim();
-
-    if (!fullname || !username || !email || !phone || !password) {
-        alert("All fields are required!");
-        return;
-    }
-
-    if (!isValidEmail(email)) {
-        alert("Invalid email format!");
-        return;
-    }
-
-    if (!isValidPhone(phone)) {
-        alert("Phone number must be 10 digits!");
-        return;
-    }
-
-    if (!isValidPassword(password)) {
-        alert("Password must be at least 6 characters long!");
-        return;
-    }
-
-    let userData = { fullname, username, email, phone, password, role };
-
-    try {
-        let response = await fetch("http://localhost:5000/api/signup", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(userData)
-        });
-
-        let data = await response.json();
-        if (response.ok) {
-            alert(`Signup successful! ${data.message}`);
-            window.location.href = role === "driver" ? "driver-dashboard.html" : "dashboard.html";
-        } else {
-            alert(data.error);
-        }
-    } catch (error) {
-        console.error("Signup error:", error);
-    }
-}
-
-// Function to handle login for both passenger and driver (API CALL)
-async function handleLogin(event, role) {
-    event.preventDefault();
-
-    let username = document.getElementById(`${role}-username`).value.trim();
-    let password = document.getElementById(`${role}-password`).value.trim();
-    let driverId = role === "driver" ? document.getElementById("driver-id")?.value.trim() : null;
-
-    if (!username || !password || (role === "driver" && !driverId)) {
-        alert("Driver ID, Username, and Password are required!");
-        return;
-    }
-
-    let loginData = { username, password, role };
-    if (role === "driver") loginData.driverId = driverId;
-
-    try {
-        let response = await fetch("http://localhost:5000/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(loginData)
-        });
-
-        let data = await response.json();
-        if (response.ok) {
-            alert(`Login successful! Welcome back, ${data.fullname}`);
-            window.location.href = role === "passenger" ? "dashboard.html" : "driver-dashboard.html";
-        } else {
-            alert(data.error);
-        }
-    } catch (error) {
-        console.error("Login error:", error);
-    }
-}
-
-// Function to fetch buses from the backend (API CALL)
-async function fetchBuses(fromLocation, toLocation) {
-    try {
-        let url = "http://localhost:5000/api/buses";
-        if (fromLocation && toLocation) {
-            url += `?from=${fromLocation}&to=${toLocation}`;
-        }
-        let response = await fetch(url);
-        let data = await response.json();
-
-        console.log("Bus Data:", data);
-
-        let busList = document.getElementById("availableBuses");
-        busList.innerHTML = ""; // Clear old data
-
-        if (data && data.length > 0) {
-            data.forEach(bus => {
-                let li = document.createElement("li");
-                li.textContent = `Bus - From ${bus.from_location} to ${bus.to_location} via ${bus.via} at ${bus.departure_time}`;
-                busList.appendChild(li);
-            });
-        } else {
-            busList.innerHTML = "<li>No buses available for this route.</li>";
-        }
-    } catch (error) {
-        console.error("Error fetching buses:", error);
-        let busList = document.getElementById("availableBuses");
-        busList.innerHTML = "<li>Error fetching buses. Please try again.</li>";
-    }
-}
-
-// Attach event listeners after DOM loads
 document.addEventListener("DOMContentLoaded", function () {
-    fetch("http://localhost:5000/api/buses")
-    .then(response => response.json())
-    .then(data => {
-        console.log(data); // Check if data is received
-  })
-    .catch(error => console.error("Error fetching buses:", error));
+    console.log("🚀 script.js loaded!");
 
-    const passengerSignupForm = document.getElementById("passenger-signup-form");
-    if (passengerSignupForm) {
-        passengerSignupForm.addEventListener("submit", (e) => handleSignup(e, "passenger"));
-    } else {
-        console.warn("Element with ID 'passenger-signup-form' not found.");
+    // Function to show/hide forms based on role (passenger/driver)
+    window.showForm = function (role) {
+        // Hide all forms first
+        document.getElementById('passenger-form').classList.add('hidden');
+        document.getElementById('passenger-signup-form').classList.add('hidden');
+        document.getElementById('driver-form').classList.add('hidden');
+        document.getElementById('driver-signup-form').classList.add('hidden');
+
+        // Show the selected role's login form
+        document.getElementById(`${role}-form`).classList.remove('hidden');
     }
 
-    document.getElementById("driver-signup-form").addEventListener("submit", (e) => handleSignup(e, "driver"));
-    document.getElementById("passenger-form").addEventListener("submit", (e) => handleLogin(e, "passenger"));
-    document.getElementById("driver-form").addEventListener("submit", (e) => handleLogin(e, "driver"));
+    // Function to toggle between login and signup forms
+    window.toggleAuthForm = function () {
+        const passengerLoginForm = document.getElementById('passenger-form');
+        const passengerSignupForm = document.getElementById('passenger-signup-form');
+        const driverLoginForm = document.getElementById('driver-form');
+        const driverSignupForm = document.getElementById('driver-signup-form');
 
-    fetchBuses(); // Fetch buses on page load
+        if (passengerLoginForm && !passengerLoginForm.classList.contains('hidden')) {
+            passengerLoginForm.classList.add('hidden');
+            passengerSignupForm.classList.remove('hidden');
+        } else if (passengerSignupForm && !passengerSignupForm.classList.contains('hidden')) {
+            passengerSignupForm.classList.add('hidden');
+            passengerLoginForm.classList.remove('hidden');
+        } else if (driverLoginForm && !driverLoginForm.classList.contains('hidden')) {
+            driverLoginForm.classList.add('hidden');
+            driverSignupForm.classList.remove('hidden');
+        } else if (driverSignupForm && !driverSignupForm.classList.contains('hidden')) {
+            driverSignupForm.classList.add('hidden');
+            driverLoginForm.classList.remove('hidden');
+        }
+    }
+
+    // Function to toggle password visibility
+    window.togglePasswordVisibility = function (inputId) {
+        const passwordInput = document.getElementById(inputId);
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        // Toggle the eye icon
+        const toggleIcon = passwordInput.parentNode.querySelector('.toggle-password i');
+        toggleIcon.classList.toggle('fa-eye');
+        toggleIcon.classList.toggle('fa-eye-slash');
+    }
+
+    // --- Form Submission Handling ---
+    // Example for passenger login form
+    const passengerLoginForm = document.getElementById('passenger-form');
+    if (passengerLoginForm) {
+        passengerLoginForm.addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Get form data
+            const username = document.getElementById('passenger-username').value;
+            const password = document.getElementById('passenger-password').value;
+
+            // Basic validation
+            if (!username || !password) {
+                alert('Please enter both username and password.');
+                return;
+            }
+
+            // Send data to backend (replace with your actual API endpoint)
+            try {
+                const response = await fetch('http://localhost:5000/api/passenger/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Handle successful login (e.g., redirect to dashboard)
+                    console.log('Login successful:', data);
+                    alert('Login successful!');
+                    // window.location.href = 'dashboard.html'; // Redirect to dashboard
+                } else {
+                    // Handle login error (e.g., display error message)
+                    console.error('Login failed:', data);
+                    alert('Login failed: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error during login:', error);
+                alert('Error during login: ' + error.message);
+            }
+        });
+    }
+
+    const stopCheckInBtn = document.getElementById("stopCheckIn");
+    const availableBusesList = document.getElementById("availableBuses");
+    const submitRouteBtn = document.getElementById("submitRoute");
+
+    // 🚍 Fetch and Display Buses Based on User Input
+    async function fetchBuses(fromLocation, toLocation) {
+        try {
+            if (!fromLocation || !toLocation) {
+                alert("⚠️ Please enter both 'From' and 'To' locations.");
+                return;
+            }
+
+            let url = `http://localhost:5000/api/buses?from=${encodeURIComponent(fromLocation)}&to=${encodeURIComponent(toLocation)}`;
+            let response = await fetch(url);
+            let data = await response.json();
+
+            console.log("📊 Bus Data:", data);
+
+            availableBusesList.innerHTML = ""; // Clear previous results
+
+            if (data && data.length > 0) {
+                data.forEach(bus => {
+                    let li = document.createElement("li");
+                    li.textContent = `🚌 Bus from ${bus.from_location} to ${bus.to_location} via ${bus.via} at ${bus.departure_time}`;
+                    availableBusesList.appendChild(li);
+                });
+            } else {
+                availableBusesList.innerHTML = "<li>No buses available for this route.</li>";
+            }
+        } catch (error) {
+            console.error("❌ Error fetching buses:", error);
+            availableBusesList.innerHTML = "<li>Error fetching buses. Please try again.</li>";
+        }
+    }
+
+    // 🏷️ Event listener for Fetching Buses
+    if (submitRouteBtn) {
+        submitRouteBtn.addEventListener("click", function () {
+            const fromLocation = document.getElementById("fromLocation")?.value.trim();
+            const toLocation = document.getElementById("toLocation")?.value.trim();
+
+            fetchBuses(fromLocation, toLocation);
+        });
+    } else {
+        console.warn("🚨 Warning: submitRoute button not found!");
+    }
+
+    // 📍 Passenger Check-In (Geolocation)
+    if (stopCheckInBtn) {
+        stopCheckInBtn.addEventListener("click", function () {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        let lat = position.coords.latitude;
+                        let lng = position.coords.longitude;
+                        let timestamp = new Date().toLocaleTimeString();
+                        let checkIns = JSON.parse(localStorage.getItem("passengerCheckIns")) || [];
+                        checkIns.push({ lat, lng, timestamp });
+
+                        localStorage.setItem("passengerCheckIns", JSON.stringify(checkIns));
+
+                        alert("✅ Check-In successful! The driver will see your location.");
+                    },
+                    function (error) {
+                        alert("❌ Error getting location: " + error.message);
+                    }
+                );
+            } else {
+                alert("⚠️ Geolocation is not supported by this browser.");
+            }
+        });
+    } else {
+        console.warn("🚨 Warning: stopCheckIn button not found!");
+    }
 });
